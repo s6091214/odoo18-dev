@@ -3,7 +3,7 @@ version: "3.1"
 services:
   web:
     image: odoo:18
-    container_name: web
+    container_name: odoo
     depends_on:
       - db
     ports:
