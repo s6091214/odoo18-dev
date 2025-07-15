@@ -1,0 +1,19 @@
+# Odoo 官方原始碼
+odoo/
+
+# Python 快取
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 開發用資料夾
+*.log
+*.db
+.env
+.vscode/
+.idea/
+
+# Docker volumes（如有）
+postgres-data/
+odoo-data/
