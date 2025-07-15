@@ -35,7 +35,7 @@
        git clone --branch 18.0 https://github.com/odoo/odoo.git ./odoo
    ```
 
-   🔄 方法二：從已安裝容器中複製出原始碼  
+   🔄 方法二：從容器中複製出原始碼  
    如果你使用的是 Odoo 官方映像（如 odoo:18），Odoo 原始碼其實已經內建在容器中了，你可以用以下方式複製出來（適用於研究或除錯）：
 
    ```bash
@@ -260,10 +260,11 @@ addons_path = /odoo/addons,/addons
 > **注意**  
 > 頁面升級方便快速，適合小改動和測試，但有時修改底層 Python 程式碼時會失敗或不完全。
 
-#### 命令列升級（較推薦）
+#### 模組升級（較推薦）
 
 ```bash
-docker-compose exec odoo odoo -u my_custom_module -d odoo_db
+docker-compose exec web odoo -u 模組名稱 -d 資料庫名稱 --no-http
+docker-compose exec web odoo -u estate -d odoo18testdb --no-http
 ```
 
 > 這種方式更可控且完整，適合正式開發與批量部署。
