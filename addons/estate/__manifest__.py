@@ -3,7 +3,7 @@
     "version": "1.0",
     "summary": "測試用模組",
     "depends": ["base"],
-    # "data": ["security/ir.model.access.csv"],
+    "data": ["security/ir.model.access.csv"],
     "author": "測試",
     "installable": True,  # 是否可安裝
     "application": True,  # 是否作為獨立應用顯示

@@ -274,6 +274,7 @@ access_estate_property,access.estate.property,model_estate_property,base.group_u
 🔁 若要給全部權限（開發階段建議用）
 
 ```cs
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_estate_property_all,access.estate.property.all,model_estate_property,base.group_user,1,1,1,1
 ```
 
