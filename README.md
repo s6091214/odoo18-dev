@@ -146,7 +146,7 @@ docker volume rm volume_name
 
 在 `addons/` 底下建立你的模組資料夾，例如 `my_custom_module/`，資料夾結構如下：
 
-```
+```bash
 my_custom_module/
 ├── __init__.py
 ├── __manifest__.py
@@ -196,40 +196,134 @@ class MyModel(models.Model):
 
 ```xml
 <odoo>
-    <record id="view_my_model_form" model="ir.ui.view">
-        <field name="name">my.model.form</field>
-        <field name="model">my.model</field>
-        <field name="arch" type="xml">
-            <form string="My Model">
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                        <field name="active"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
+    <!-- 定義一個動作（Action）讓使用者能透過 UI 開啟 model 的視圖 -->
+    <record id="test_model_action" model="ir.actions.act_window">
+        <!-- 在後台或選單中顯示的動作名稱 -->
+        <field name="name">Test action</field>
 
-    <record id="view_my_model_tree" model="ir.ui.view">
-        <field name="name">my.model.tree</field>
-        <field name="model">my.model</field>
-        <field name="arch" type="xml">
-            <tree string="My Model">
-                <field name="name"/>
-                <field name="active"/>
-            </tree>
-        </field>
-    </record>
+        <!-- 綁定的模型（這裡是你在 models 定義的 test_model） -->
+        <field name="res_model">test_model</field>
 
-    <menuitem id="my_model_root_menu" name="My Module"/>
-    <menuitem id="my_model_menu" name="My Models" parent="my_model_root_menu"/>
-    <act_window id="action_my_model"
-                name="My Models"
-                res_model="my.model"
-                view_mode="tree,form"
-                menu_id="my_model_menu"/>
+        <!-- 顯示模式，list 表示清單檢視，form 表示表單檢視 -->
+        <field name="view_mode">list,form</field>
+    </record>
 </odoo>
+```
+
+🧩 這段 XML 的功能？
+這是 建立一個後台的「操作動作 (action)」。意思是，你在 Odoo 後台可以點選某個項目，開啟對應的模型資料，進入清單或表單頁面。
+
+🧱 各部分說明
+元素 說明
+
+| 元素                              | 說明                                  |
+| ------------------------------- | ----------------------------------- |
+| `<record ...>`                  | 用來建立資料（在這裡是 Action 設定）              |
+| `id="test_model_action"`        | 這個是這段設定的唯一識別 ID，可在其他地方引用            |
+| `model="ir.actions.act_window"` | 告訴 Odoo 這是一個「開窗動作」                  |
+| `<field name="name">`           | 顯示在選單或視圖上的名稱                        |
+| `<field name="res_model">`      | 綁定你想要打開的模型（你在 Python 中定義的）          |
+| `<field name="view_mode">`      | 顯示的方式，`list` 表示清單、`form` 表示表單，可兩者都寫 |
+
+#### python 檔案（models/test_model.py）
+
+```python
+from odoo import models, fields
+
+class TestModel(models.Model):
+    _name = "test.model"
+    _description = "測試模型"
+
+    name = fields.Char(string="名稱")
+    description = fields.Text(string="說明")
+```
+
+注意：這裡的 _name = "test.model" 要和 XML 中的 `<field name="res_model">`test.model</field> 一致。
+res_model 一定要完全等於你在 Python 裡定義的 _name 字串，否則會報錯「無效的模型名稱」。
+![模組名稱](./image/README/13.png)
+
+當你修改或新增 XML 檔案，例如 estate/views/estate_property_views.xml，可以從 Docker log中觀察是否成功載入：
+
+```bash
+INFO odoo18testdb odoo.modules.loading: loading estate/views/estate_property_views.xml 
+```
+
+這行訊息代表你的 XML 檔案已成功被 Odoo 載入。
+
+❗ 若升級或安裝失敗
+
+```bash
+odoo.tools.convert.ParseError: while parsing /mnt/extra-addons/estate/views/estate_property_views.xml:2
+動作定義中使用了無效的模型名稱「estate_property」。
+```
+
+![錯誤範例](./image/README/14.png)
+
+💥 代表 res_model="estate_property" 找不到模型，請檢查以下：
+
+- 你在 estate_property.py 中定義的_name 是否與 XML 裡的 `<field name="res_model">` 內容一致
+✅ 正確的例子：
+Python 中 _name = "estate.property"，那麼 XML 裡要寫：
+`<field name="res_model">`estate.property</field>
+
+- 注意不要混用底線和點號：
+_name = "estate.property" ⛔ 不能寫成 res_model="estate_property"，這樣會找不到模型。
+
+#### 加上 Menu 選單（可選）
+
+如果你希望這個畫面能從左側選單開啟，還要加這個：
+
+```xml
+<odoo>
+    <menuitem id="test_menu_root" name="房地產廣告測試">
+        <menuitem id="test_first_level_menu" name="房屋訊息測試">
+            <menuitem id="test_model_menu_action" action="estate_property_action" />
+        </menuitem>
+    </menuitem>
+</odoo>
+
+```
+
+🔸 第一層：根選單（test_menu_root）
+
+```xml
+<menuitem id="test_menu_root" name="房地產廣告測試">
+```
+
+- name="房地產廣告測試"：這是畫面上顯示的名稱，在左上角選單中打開。
+- 安裝或升級模組成功後顯示畫面:
+![第一層：根選單](./image/README/15.png)
+
+🔸 第二層：子選單（test_first_level_menu）
+
+```xml
+<menuitem id="test_first_level_menu" name="房屋訊息測試">
+```
+
+- 使用者在第一層點選後會看到這個項目。
+![第二層：子選單](./image/README/16.png)
+
+🔸 第三層：點選會開啟頁面的選單（test_model_menu_action）
+
+```xml
+<menuitem id="test_first_level_menu" name="房屋訊息測試">
+```
+
+- action="estate_property_action"：這代表使用者點這個選單時，要打開哪一個畫面。
+- estate_property_action 是你在另外一份 XML 中定義的畫面開啟方式（比如清單＋表單檢視）
+
+🧠 小提醒
+
+- 所有 id 都不能重複。
+- action 要先定義（在另一個 XML 裡），然後在這裡被引用。
+- 所有這些 XML 最後都會放進 **manifest**.py 的 data 欄位中有引入先後順序要注意：
+
+```python
+'data': [
+    'views/estate_property_views.xml',
+    'views/estate_menus.xml',
+],
+
 ```
 
 ### 3️⃣ 設定 addons_path（若尚未設定）
@@ -252,7 +346,7 @@ addons_path = /odoo/addons,/addons
    - ✅ 是否已在 **manifest**.py 中加上 "application": True
    - 有的話模組會顯示在應用程式頁面中
    - 沒有的話，模組預設會被隱藏，不會出現在應用程式清單中
-   - 取消搜尋框中的「應用程式」勾選，再輸入模組名稱搜尋
+   - 取消搜尋框中的「應用程式」，再輸入模組名稱搜尋
 
 ---
 
@@ -350,6 +444,89 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 ✅ 解決方式：
 請參考 👉 5️⃣[設定權限](#5️⃣-設定權限) 並在你的模組中新增 security/ir.model.access.csv 檔案。
 ⚠️ 若未新增，模組仍可安裝，但非管理員帳號將無法操作任何 estate.property 的記錄。
+
+---
+
+🧩 Odoo ORM 常用欄位型別與參數對照表
+
+✅ 1. 字串欄位（文字）
+
+```python
+name = fields.Char(string="名稱", required=True, help="輸入名稱", default="預設值")
+```
+
+| 參數名稱       | 說明               |
+| ---------- | ---------------- |
+| `string`   | 欄位標籤（畫面顯示用）      |
+| `required` | 是否必填（True/False） |
+| `default`  | 預設值              |
+| `help`     | 顯示說明（滑鼠提示）       |
+
+✅ 2. 數字欄位（整數 / 浮點數）
+
+```python
+age = fields.Integer(string="年齡", required=False)
+price = fields.Float(string="價格", digits=(6, 2))
+```
+
+| 型別        | 說明      |
+| --------- | ------- |
+| `Integer` | 整數      |
+| `Float`   | 浮點數，小數點 |
+
+🧠 digits=(6, 2) 表示：最多6位數，其中2位小數
+
+✅ 3. 布林欄位（True/False）
+
+```python
+active = fields.Boolean(string="啟用", default=True)
+```
+
+✅ 通常搭配 active 欄位，控制資料是否顯示於清單中
+
+✅ 4. 日期欄位
+
+```python
+start_date = fields.Date(string="開始日期")
+end_time = fields.Datetime(string="結束時間")
+```
+
+| 型別         | 說明                           |
+| ---------- | ---------------------------- |
+| `Date`     | 只有日期（yyyy-mm-dd）             |
+| `Datetime` | 日期+時間（yyyy-mm-dd hh\:mm\:ss） |
+
+✅ 5. 關聯欄位（Many2one、One2many、Many2many）
+
+```python
+# 單筆關聯
+partner_id = fields.Many2one('res.partner', string="客戶")
+
+# 一對多
+order_lines = fields.One2many('sale.order.line', 'order_id', string="訂單明細")
+
+# 多對多
+tags = fields.Many2many('res.partner.category', string="分類標籤")
+```
+
+| 型別          | 說明           |
+| ----------- | ------------ |
+| `Many2one`  | 對應一筆資料（下拉選單） |
+| `One2many`  | 關聯多筆資料（子表格）  |
+| `Many2many` | 多對多關係（多選）    |
+
+✅ 常見參數速查表
+
+| 參數         | 用法範例            | 說明            |
+| ---------- | --------------- | ------------- |
+| `string`   | `string="名稱"`   | 畫面上顯示的欄位名稱    |
+| `required` | `required=True` | 是否為必填欄位       |
+| `default`  | `default="預設值"` | 指定預設值         |
+| `help`     | `help="滑鼠提示說明"` | 滑鼠移過時的說明提示    |
+| `readonly` | `readonly=True` | 僅讀欄位，不能編輯     |
+| `index`    | `index=True`    | 加索引，加速搜尋（技術用） |
+| `copy`     | `copy=False`    | 複製紀錄時是否也複製這欄位 |
+| `tracking` | `tracking=True` | 是否開啟追蹤（記錄修改）  |
 
 ---
 
