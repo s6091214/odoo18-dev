@@ -1,4 +1,50 @@
 <odoo>
+    <record id="estate_property_views_list" model="ir.ui.view">
+        <field name="name">estate_property_views_list</field>
+        <field name="model">estate_property</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name" string="房屋名稱" />
+                <field name="bedrooms" string="臥室數" />
+                <field name="living_area" string="坪數" />
+                <field name="expected_price" string="預期價格" />
+                <field name="selling_price" string="成交價格" />
+                <field name="date_availability" string="可用日期" />
+            </list>
+        </field>
+    </record>
+
+    <!-- <record id="estate_property_views_form" model="ir.ui.view">
+        <field name="name">estate_property_form</field>
+        <field name="model">estate_property</field>
+        <field name="arch" type="xml">
+            <form string="Estate Property">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_lost_leads" type="object"
+                            class="oe_stat_button" icon="fa-star">
+                            <div class="o_stat_info">
+                                <field name="leads_count" class="o_stat_value" />
+                                <span class="o_stat_text"> Leads</span>
+                            </div>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                        attrs="{'invisible': [('active', '=', True)]}" />
+                    <div class="oe_title">
+                        <div class="oe_edit_only">
+                            <label for="name" />
+                        </div>
+                        <h1 class="mb32">
+                            <field name="name" class="mb16" />
+                        </h1>
+                        <field name="active" invisible="1" />
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record> -->
+
     <record id="estate_test_model_action" model="ir.actions.act_window">
         <field name="name">房屋資訊</field>
         <field name="res_model">estate_property</field>

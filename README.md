@@ -530,6 +530,25 @@ tags = fields.Many2many('res.partner.category', string="分類標籤")
 
 ---
 
+🧩 自訂 List 列表教學
+
+ 1. 範例
+
+```xml
+<record id="view_model_list" model="ir.ui.view">
+  <field name="name">model.list</field>
+  <field name="model">your.model.name</field>
+  <field name="arch" type="xml">
+    <list>
+      <field name="field1" string="自訂欄位1名稱"/>
+      <field name="field2" string="自訂欄位2名稱"/>
+    </list>
+  </field>
+</record>
+```
+
+---
+
 ## 📚 延伸閱讀
 
 - [Odoo 官方開發者文件](https://www.odoo.com/documentation/18.0/developer.html)
