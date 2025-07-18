@@ -1,4 +1,4 @@
-# 📦 Odoo 18 開發環境專案
+# 📦 Odoo 18 開發環境專案 {#top}
 
 本專案為一個基於 **Odoo 18** 的開發環境，支援模組擴充與 Docker 容器化部署，適合用於學習與開發企業應用系統。
 
@@ -16,7 +16,27 @@
 
 ---
 
-## 🚀 安裝步驟
+> 🔗 快速導覽：
+
+- [安裝步驟](#installation-steps)
+- [啟動容器](#start-container)
+- [連線資料庫](#connection-database)
+- [docker常用指令](#docker-common-instructions)
+- [新增自訂模組](#add-custom-modules)
+- [設定 addons_path](#setting-addons-path)
+- [安裝模組](#install-mod)
+- [設定權限](#set-permissions)
+- [修改後升級模組](#modified-upgrade-module)
+- [消除模組警告](#eliminate-module-warnings)
+- [Odoo ORM 常用欄位型別與參數對照表](#odoo-orm-type)
+- [自訂表格欄位](#custom-list)
+- [自訂表單](#custom-form)
+- [自訂義樣式區塊](#custom-style-block)
+- [Bootstrap 常用樣式](#bootstrap)
+
+---
+
+## 🚀 安裝步驟 {#installation-steps}
 
 1. **克隆專案**
 
@@ -50,7 +70,9 @@
    > 注意：`odoo` 是你的 Odoo 容器名稱，請用 `docker ps` 確認。
    ![docker](./image/README/3.png)
 
-### 啟動容器
+   [回到頂部](#top)
+
+### 啟動容器 {#start-container}
 
 ```bash
    docker-compose up -d
@@ -78,9 +100,11 @@
 - 若有看到你剛剛設定的資料庫名稱（如 `odoo_db`），表示建立成功  
 - 若沒有，請回頭確認容器是否有成功啟動，登入資訊是否正確，並檢查 `docker-compose.yml` 與 `odoo.conf` 中的設定是否正確。
 
+[回到頂部](#top)
+
 ---
 
-## 連線資料庫
+## 連線資料庫 {#connection-database}
 
 1. 打開 Navicat，新增一個 **PostgreSQL 連線**
 2. 填入以下連線資訊（需對應你的 `docker-compose.yml` 設定）：
@@ -98,7 +122,9 @@
 4. 連線成功後
   ![資料庫連線成功](./image/README/6.png)
 
-## 🛠️ 常用指令說明
+  [回到頂部](#top)
+
+## 🛠️ docker常用指令 {#docker-common-instructions}
 
 ```bash
 # 啟動專案（後台運行）
@@ -138,9 +164,11 @@ docker volume rm volume_name
 # 刪除指定的卷。若卷被容器使用中，需先停止並刪除相關容器。
 ```
 
+[回到頂部](#top)
+
 ---
 
-## 🧩 新增自訂模組教學
+## 🧩 新增自訂模組 {#add-custom-modules}
 
 ### 1️⃣ 建立模組資料夾
 
@@ -323,10 +351,13 @@ _name = "estate.property" ⛔ 不能寫成 res_model="estate_property"，這樣�
     'views/estate_property_views.xml',
     'views/estate_menus.xml',
 ],
-
 ```
 
-### 3️⃣ 設定 addons_path（若尚未設定）
+[回到頂部](#top)
+
+---
+
+### 3️⃣ 設定 addons_path（若尚未設定）{#setting-addons-path}
 
 編輯 `odoo.conf`，確保有自訂模組路徑：
 
@@ -334,7 +365,11 @@ _name = "estate.property" ⛔ 不能寫成 res_model="estate_property"，這樣�
 addons_path = /odoo/addons,/addons
 ```
 
-### 4️⃣ 安裝模組
+[回到頂部](#top)
+
+---
+
+### 4️⃣ 安裝模組 {#install-mod}
 
 1. 重啟服務：`docker-compose restart`
 2. 進入「應用程式」頁面，搜尋你的模組並安裝
@@ -348,9 +383,11 @@ addons_path = /odoo/addons,/addons
    - 沒有的話，模組預設會被隱藏，不會出現在應用程式清單中
    - 取消搜尋框中的「應用程式」，再輸入模組名稱搜尋
 
+[回到頂部](#top)
+
 ---
 
-### 5️⃣-設定權限
+### 5️⃣ 設定權限 {#set-permissions}
 
 當你建立自訂模型後，必須定義存取權限，否則在容器內查看log會看到警告。
 📁 建立權限設定檔
@@ -382,9 +419,11 @@ access_estate_property_all,access.estate.property.all,model_estate_property,base
 ],
 ```
 
+[回到頂部](#top)
+
 ---
 
-### 6️⃣ 修改後升級模組
+### 6️⃣ 修改後升級模組 {#modified-upgrade-module}
 
 若修改 models 或欄位結構，請透過下列方式升級模組：
 
@@ -407,9 +446,11 @@ docker-compose exec web odoo -u estate -d odoo18testdb --no-http
 
 > 這種方式更可控且完整，適合正式開發與批量部署。
 
+[回到頂部](#top)
+
 ---
 
-### 7️⃣ 消除模組警告
+### 7️⃣ 消除模組警告 {#eliminate-module-warnings}
 
 ⚠️ 1. 缺少 license 欄位警告
 
@@ -445,9 +486,11 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 請參考 👉 5️⃣[設定權限](#5️⃣-設定權限) 並在你的模組中新增 security/ir.model.access.csv 檔案。
 ⚠️ 若未新增，模組仍可安裝，但非管理員帳號將無法操作任何 estate.property 的記錄。
 
+[回到頂部](#top)
+
 ---
 
-🧩 Odoo ORM 常用欄位型別與參數對照表
+### Odoo ORM 常用欄位型別與參數對照表 {#odoo-orm-type}
 
 ✅ 1. 字串欄位（文字）
 
@@ -528,11 +571,13 @@ tags = fields.Many2many('res.partner.category', string="分類標籤")
 | `copy`     | `copy=False`    | 複製紀錄時是否也複製這欄位 |
 | `tracking` | `tracking=True` | 是否開啟追蹤（記錄修改）  |
 
+[回到頂部](#top)
+
 ---
 
-🧩 自訂 List 列表教學
+### 自訂表格欄位 {#custom-list}
 
- 1. 範例
+範例
 
 ```xml
 <record id="view_model_list" model="ir.ui.view">
@@ -546,6 +591,289 @@ tags = fields.Many2many('res.partner.category', string="分類標籤")
   </field>
 </record>
 ```
+
+[回到頂部](#top)
+
+---
+
+### 自訂表單 {#custom-form}
+
+基本結構說明
+
+```xml
+<record id="view_estate_property_form" model="ir.ui.view">
+  <field name="name">view_estate_property_form</field>
+  <field name="model">estate_property</field>
+
+  <!-- 表單畫面的 XML 架構 -->
+  <field name="arch" type="xml">
+    <form string="房產表單">
+      <sheet>
+        <!-- 表單標題 -->
+        <h1>
+          <field name="name"/>
+        </h1>
+
+        <!-- 一般欄位區域 -->
+        <group>
+          <field name="expected_price"/>
+          <field name="selling_price"/>
+          <field name="state"/>
+          <field name="active"/>
+        </group>
+
+        <!-- 分頁顯示區 -->
+        <notebook>
+          <page string="詳細資訊">
+            <field name="description"/>
+          </page>
+        </notebook>
+
+      </sheet>
+    </form>
+  </field>
+</record>
+```
+
+🧠 標籤說明
+
+| 元素             | 說明                        |
+| -------------- | ------------------------- |
+| `<form>`       | 表示這是「表單視圖」，顯示一筆資料的詳細內容    |
+| `<sheet>`      | Odoo 標準的版型區塊，內部放欄位與頁籤等    |
+| `<h1>`         | 放在頂部，通常用來顯示名稱或標題欄位        |
+| `<group>`      | 會將欄位左右分欄顯示，排版整齊           |
+| `<notebook>`   | 分頁元件，讓表單分成不同頁籤（例如基本資訊、備註） |
+| `<page>`       | notebook 裡的每一個分頁          |
+| `string="..."` | 自訂每個區塊的標題（例如表單名稱或頁籤標題）    |
+
+[回到頂部](#top)
+
+---
+
+### 自訂搜尋 {#定義搜尋視圖（search}
+
+🧩 1. 定義搜尋視圖（search view）
+在你的自訂模組中的 XML 檔案中，繼承目標模型的 search view，並新增自訂篩選器：
+
+```xml
+    <record id="estate_property_views_search" model="ir.ui.view">
+        <field name="name">estate_property_views_form_search</field>
+        <field name="model">estate_property</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="postcode" />
+                <field name="expected_price" />
+                <field name="bedrooms" />
+                <field name="living_area" />
+                <field name="facades" />
+
+                <filter string="可用的" name="available"
+                    domain="['|', ('state', '=', 'new'), ('state', '=', 'offer_received')]" />
+                <group expand="1" string="Group By">
+                    <filter string="郵政編碼" name="postcode"
+                        context="{'group_by':'postcode', 'residual_visible':True}" />
+                </group>
+            </search>
+
+        </field>
+    </record>
+```
+
+🔎 `<search>` 區塊：搜尋欄位定義
+
+```xml
+<search>
+  <field name="name" />
+  <field name="postcode" />
+  ...
+</search>
+```
+
+- field：列出可以搜尋的欄位，會顯示在搜尋列中。
+- 這些欄位對應模型中的欄位，例如房產名稱、郵遞區號、預期售價、房間數等。
+
+✅ `<filter>` 自訂篩選器
+
+```xml
+<filter string="可用的" name="available"
+    domain="['|', ('state', '=', 'new'), ('state', '=', 'offer_received')]" />
+```
+
+- string：顯示名稱。
+- name：內部識別名稱。
+- domain：篩選條件。
+
+`<group>` 群組篩選器
+
+```xml
+<group expand="1" string="Group By">
+  <filter string="郵政編碼" name="postcode"
+      context="{'group_by':'postcode', 'residual_visible':True}" />
+</group>
+```
+
+📝 小提醒
+
+- 自訂篩選器的 domain 必須是合法的 domain 語法，並注意字串是否加上引號。
+- 可根據實際需求，新增多個 filter 與 group_by。
+- 搭配 default_ 參數可以讓某個篩選器預設啟用。
+
+---
+
+### 自訂義樣式區塊 {#custom-style-block}
+
+📁 SCSS
+請放在 your_module/static/src/scss/custom_styles.scss
+📁 CSS
+請放在 your_module/static/src/css/custom_styles.css
+📦 加入到 manifest.py
+
+```python
+"assets": {
+    "web.assets_backend": [
+        "your_module/static/src/scss/custom_styles.scss",  # 若用 SCSS
+        # "your_module/static/src/css/custom_styles.css",  # 若用 CSS
+    ],
+},
+```
+
+📋 用法示例
+
+```xml
+<list>
+  <field name="name" class="property-col-25 text-bold text-center bg-lightgray"/>
+  <field name="expected_price" class="property-col-25 text-right text-green"/>
+  <field name="selling_price" class="property-col-25 text-right text-red"/>
+  <field name="date_availability" class="property-col-25 text-center"/>
+</list>
+```
+
+Bootstrap 加入方式（官方已內建）
+Odoo 18 後台使用 Bootstrap 5 已經內建，你無需額外引入，可直接使用 Bootstrap 的 class，例如：
+
+```xml
+<field name="expected_price" class="text-end text-success fw-bold bg-light" />
+```
+
+[回到頂部](#top)
+
+---
+
+## Bootstrap 常用樣式 {#bootstrap}
+
+🔗 參考文件：
+👉 [Bootstrap 5 文件 - HEX School 中文版](https://bootstrap5.hexschool.com/docs/5.1/getting-started/introduction/)
+
+## 文字對齊 {#text-align}
+
+| Class         | 功能    | 範例用法                             |
+| ------------- | ------- | ---------------------------------- |
+| `text-start`  | 靠左對齊 | `<div class="text-start">...</div>` |
+| `text-center` | 置中對齊 | `<div class="text-center">...</div>` |
+| `text-end`    | 靠右對齊 | `<div class="text-end">...</div>`    |
+
+---
+
+## 文字顏色 {#text-color}
+
+| Class            | 功能           | 範例用法                                 |
+| ---------------- | -------------- | -------------------------------------- |
+| `text-primary`   | 主要色文字（藍） | `<p class="text-primary">主要色文字</p>` |
+| `text-secondary` | 次要色文字（灰） | `<p class="text-secondary">次要色文字</p>` |
+| `text-success`   | 成功色文字（綠） | `<p class="text-success">成功色文字</p>` |
+| `text-danger`    | 危險色文字（紅） | `<p class="text-danger">危險色文字</p>` |
+| `text-warning`   | 警告色文字（黃） | `<p class="text-warning">警告色文字</p>` |
+| `text-info`      | 資訊色文字（淺藍） | `<p class="text-info">資訊色文字</p>`    |
+| `text-light`     | 淺色文字       | `<p class="text-light bg-dark">淺色文字</p>` |
+| `text-dark`      | 深色文字       | `<p class="text-dark">深色文字</p>`       |
+| `text-muted`     | 變灰文字       | `<p class="text-muted">變灰文字</p>`       |
+
+---
+
+## 按鈕 {#buttons}
+
+| Class               | 功能        | 範例用法                                  |
+| ------------------- | --------- | --------------------------------------- |
+| `btn`               | 按鈕基礎樣式 | `<button class="btn btn-primary">按鈕</button>` |
+| `btn-primary`       | 主要按鈕顏色 | `<button class="btn btn-primary">主要</button>`  |
+| `btn-secondary`     | 次要按鈕顏色 | `<button class="btn btn-secondary">次要</button>` |
+| `btn-success`       | 成功綠色按鈕 | `<button class="btn btn-success">成功</button>`  |
+| `btn-danger`        | 危險紅色按鈕 | `<button class="btn btn-danger">危險</button>`   |
+| `btn-warning`       | 警告黃色按鈕 | `<button class="btn btn-warning">警告</button>`  |
+| `btn-info`          | 資訊淺藍按鈕 | `<button class="btn btn-info">資訊</button>`     |
+| `btn-light`         | 淺色按鈕     | `<button class="btn btn-light">淺色</button>`    |
+| `btn-dark`          | 深色按鈕     | `<button class="btn btn-dark">深色</button>`     |
+| `btn-link`          | 連結樣式按鈕 | `<button class="btn btn-link">連結</button>`     |
+
+---
+
+## 邊框 {#borders}
+
+| Class            | 功能         | 範例用法                              |
+| ---------------- | ---------- | ----------------------------------- |
+| `border`         | 加上邊框      | `<div class="border">有邊框的區塊</div>`  |
+| `border-top`     | 上邊框       | `<div class="border-top">只有上邊框</div>` |
+| `border-bottom`  | 下邊框       | `<div class="border-bottom">只有下邊框</div>`|
+| `border-primary` | 藍色邊框     | `<div class="border border-primary">藍色邊框</div>` |
+| `rounded`        | 圓角邊框     | `<div class="border rounded">圓角邊框</div>`  |
+| `rounded-circle` | 圓形         | `<div class="rounded-circle" style="width:50px; height:50px; background:#eee;"></div>` |
+
+---
+
+## 間距 (Margin 和 Padding) {#spacing}
+
+| Class             | 功能                  | 範例用法                               |
+| ----------------- | --------------------- | ------------------------------------ |
+| `m-0`             | 全部外距 0            | `<div class="m-0">無外距</div>`        |
+| `mt-3`            | 上方外距 1rem (16px)  | `<div class="mt-3">上方外距3</div>`     |
+| `mb-1`            | 下方外距 0.25rem (4px) | `<div class="mb-1">下方外距1</div>`     |
+| `mx-auto`         | 左右外距自動置中      | `<div class="mx-auto" style="width:200px;">置中區塊</div>` |
+| `p-2`             | 全部內距 0.5rem (8px) | `<div class="p-2">內距2</div>`          |
+| `px-4`            | 左右內距 1.5rem (24px) | `<div class="px-4">左右內距4</div>`     |
+| `py-0`            | 上下內距 0            | `<div class="py-0">上下內距0</div>`     |
+
+---
+
+## 排版 (Display) {#display}
+
+| Class       | 功能               | 範例用法                          |
+| ----------- | ------------------ | -------------------------------- |
+| `d-none`    | 隱藏元素           | `<div class="d-none">隱藏</div>` |
+| `d-block`   | 區塊元素           | `<div class="d-block">區塊</div>` |
+| `d-inline`  | 內聯元素           | `<span class="d-inline">內聯</span>` |
+| `d-inline-block` | 內聯區塊元素   | `<span class="d-inline-block">內聯區塊</span>` |
+| `d-flex`    | 彈性盒子容器       | `<div class="d-flex">Flex</div>`  |
+| `d-grid`    | Grid 容器          | `<div class="d-grid">Grid</div>`  |
+
+---
+
+## 顯示與隱藏 {#visibility}
+
+| 類別                  | 功能說明                     | 範例用法                                                   |
+| ------------------- | ------------------------ | ------------------------------------------------------ |
+| `visible`           | 元素可見 | `<div class="visible">可見</div>`   |
+| `invisible`         | 元素不可見但仍佔位                | `<div class="invisible">隱形但佔位</div>`                   |
+| `d-none`            | 所有螢幕隱藏                   | `<div class="d-none">永遠隱藏</div>`                       |
+| `d-sm-none`         | `≥576px` 隱藏，小於 576px 顯示  | `<div class="d-sm-none">小於 576px 顯示，其餘隱藏</div>`        |
+| `d-none d-sm-block` | `<576px` 隱藏，`≥576px` 顯示  | `<div class="d-none d-sm-block">576px 以上顯示，以下隱藏</div>` |
+| `d-md-block`        | `≥768px` 顯示為區塊元素（block）  | `<div class="d-md-block">中螢幕以上顯示</div>`                |
+
+---
+
+## Bootstrap 5 斷點整理對照表
+
+| 尺寸代碼  | 像素斷點      | 用途簡介     |
+| ----- | --------- | -------- |
+| `xs`  | `<576px`  | 極小裝置（手機） |
+| `sm`  | `≥576px`  | 小裝置（大手機） |
+| `md`  | `≥768px`  | 中裝置（平板）  |
+| `lg`  | `≥992px`  | 大裝置（筆電）  |
+| `xl`  | `≥1200px` | 更大裝置     |
+| `xxl` | `≥1400px` | 超大顯示器    |
+
+[回到頂部](#top)
 
 ---
 

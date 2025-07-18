@@ -4,46 +4,76 @@
         <field name="model">estate_property</field>
         <field name="arch" type="xml">
             <list>
-                <field name="name" string="房屋名稱" />
-                <field name="bedrooms" string="臥室數" />
-                <field name="living_area" string="坪數" />
-                <field name="expected_price" string="預期價格" />
-                <field name="selling_price" string="成交價格" />
-                <field name="date_availability" string="可用日期" />
+                <field name="name" string="房屋名稱" width="calc(100%/6)" />
+                <field name="bedrooms" string="臥室數" width="calc(100%/6)" />
+                <field name="living_area" string="坪數" width="calc(100%/6)" />
+                <field name="expected_price" string="預期價格" width="calc(100%/6)" />
+                <field name="selling_price" string="成交價格" width="calc(100%/6)" />
+                <field name="date_availability" string="可用日期" width="calc(100%/6)" />
             </list>
         </field>
     </record>
 
-    <!-- <record id="estate_property_views_form" model="ir.ui.view">
-        <field name="name">estate_property_form</field>
+    <record id="estate_property_views_form" model="ir.ui.view">
+        <field name="name">estate_property_views_form</field>
         <field name="model">estate_property</field>
         <field name="arch" type="xml">
-            <form string="Estate Property">
+            <form>
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button name="action_lost_leads" type="object"
-                            class="oe_stat_button" icon="fa-star">
-                            <div class="o_stat_info">
-                                <field name="leads_count" class="o_stat_value" />
-                                <span class="o_stat_text"> Leads</span>
-                            </div>
-                        </button>
-                    </div>
-                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
-                        attrs="{'invisible': [('active', '=', True)]}" />
-                    <div class="oe_title">
-                        <div class="oe_edit_only">
-                            <label for="name" />
-                        </div>
-                        <h1 class="mb32">
-                            <field name="name" class="mb16" />
-                        </h1>
-                        <field name="active" invisible="1" />
-                    </div>
+                    <h1 class="mb-4">
+                        <field name="name" />
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="postcode" />
+                            <field name="date_availability" />
+                        </group>
+                        <group>
+                            <field name="expected_price" />
+                            <field name="selling_price" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <group>
+                                <field name="description" />
+                                <field name="bedrooms" />
+                                <field name="living_area" />
+                                <field name="facades" />
+                                <field name="garage" />
+                                <field name="garden" />
+                                <field name="garden_area" />
+                                <field name="garden_orientation" />
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
-    </record> -->
+    </record>
+
+    <record id="estate_property_views_search" model="ir.ui.view">
+        <field name="name">estate_property_views_form_search</field>
+        <field name="model">estate_property</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="postcode" />
+                <field name="expected_price" />
+                <field name="bedrooms" />
+                <field name="living_area" />
+                <field name="facades" />
+
+                <filter string="可用的" name="available"
+                    domain="['|', ('state', '=', 'new'), ('state', '=', 'offer_received')]" />
+                <group expand="1" string="Group By">
+                    <filter string="郵政編碼" name="postcode"
+                        context="{'group_by':'postcode', 'residual_visible':True}" />
+                </group>
+            </search>
+
+        </field>
+    </record>
 
     <record id="estate_test_model_action" model="ir.actions.act_window">
         <field name="name">房屋資訊</field>

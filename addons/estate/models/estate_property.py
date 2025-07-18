@@ -19,7 +19,7 @@ class EstateProperty(models.Model):
     selling_price = fields.Float(string="售價", readonly=True, copy=False)
     bedrooms = fields.Integer(string="臥室數", default=2)
     living_area = fields.Integer(string="坪數", help="房屋的實際使用面積")
-    facades = fields.Integer(string="外立面數")
+    facades = fields.Integer(string="立面數")
     garage = fields.Boolean(string="車庫")
     garden = fields.Boolean(string="花園")
     garden_area = fields.Integer(string="花園面積")
