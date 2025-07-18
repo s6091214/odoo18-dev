@@ -33,6 +33,7 @@
 - [自訂表單](#custom-form)
 - [自訂義樣式區塊](#custom-style-block)
 - [Bootstrap 常用樣式](#bootstrap)
+- [自訂搜尋](#定義搜尋視圖（search)
 
 ---
 
@@ -719,6 +720,8 @@ tags = fields.Many2many('res.partner.category', string="分類標籤")
 - 自訂篩選器的 domain 必須是合法的 domain 語法，並注意字串是否加上引號。
 - 可根據實際需求，新增多個 filter 與 group_by。
 - 搭配 default_ 參數可以讓某個篩選器預設啟用。
+
+[回到頂部](#top)
 
 ---
 
