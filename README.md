@@ -18,6 +18,7 @@
 
 > 🔗 快速導覽：
 
+- [環境需求與準備](#environment-requirements)
 - [安裝步驟](#installation-steps)
 - [啟動容器](#start-container)
 - [連線資料庫](#connection-database)
@@ -33,7 +34,72 @@
 - [自訂表單](#custom-form)
 - [自訂義樣式區塊](#custom-style-block)
 - [Bootstrap 常用樣式](#bootstrap)
-- [自訂搜尋](#定義搜尋視圖（search)
+- [自訂搜尋](#search)
+- [模型之間的關聯關係](#relationships-between-models)
+
+---
+
+### 環境需求與準備 {#environment-requirements}
+
+📥 必要軟體安裝
+
+### Docker Desktop
+
+- 下載位置: <https://www.docker.com/products/docker-desktop>
+- Windows 用戶: 需要啟用 WSL2
+- 安裝後確認: 開啟 Docker Desktop，確保服務正在執行
+
+```bash
+# 測試 Docker 是否安裝成功
+docker --version
+docker-compose --verion
+```
+
+### Git（用於下載專案）
+
+- 下載位置: <https://git-scm.com/downloads>
+- 測試安裝:
+
+```bash
+git --version
+```
+
+### 程式碼編輯器（建議）
+
+- 推薦: VS Code: <https://code.visualstudio.com/>
+
+- 建議擴充套件:
+  - Python <https://marketplace.visualstudio.com/items?itemName=ms-python.python>
+  - XML <https://marketplace.visualstudio.com/items?itemName=redhat.vscode-xml>
+  - Rainbow CSV <https://marketplace.visualstudio.com/items?itemName=mechatroner.rainbow-csv>
+
+### 資料庫管理工具（選用）
+
+- Navicat: <https://www.navicat.com/cht>
+- pgAdmin: <https://www.pgadmin.org/>
+
+### 安裝前檢查清單
+
+- Docker Desktop 已安裝並啟動
+- Git 已安裝並可在命令列使用
+- 至少有 5GB 可用硬碟空間
+- 連接埠 8069 和 5432 沒有被其他程式佔
+
+ 確認連接埠是否可用:
+
+ ```bash
+ # Windows
+netstat -an | findstr :8069
+netstat -an | findstr :5432
+
+# macOS/Linux
+lsof -i :8069
+lsof -i :5432
+```
+
+如果有輸出結果，表示連接埠被佔用，需要先關閉佔用的程式。
+
+[回到頂部](#top)
 
 ---
 
@@ -42,22 +108,22 @@
 1. **克隆專案**
 
 ```bash
-   git clone https://github.com/s6091214/odoo18-dev.git
-   cd odoo18-dev
-   ```
+git clone https://github.com/s6091214/odoo18-dev.git
+cd odoo18-dev
+```
 
 **下載 Odoo 原始碼**  
 
-   ✅ 方法一：手動下載原始碼  
-   從 [Odoo GitHub](https://github.com/odoo/odoo) 下載對應版本並放入 `odoo/` 資料夾中。  
-   例如：
+✅ 方法一：手動下載原始碼  
+從 [Odoo GitHub](https://github.com/odoo/odoo) 下載對應版本並放入 `odoo/` 資料夾中。  
+例如：
 
 ```bash
        git clone --branch 18.0 https://github.com/odoo/odoo.git ./odoo
-   ```
+```
 
-   🔄 方法二：從容器中複製出原始碼  
-   如果你使用的是 Odoo 官方映像（如 `odoo:18`），Odoo 原始碼其實已經內建在容器中了，你可以用以下方式複製出來（適用於研究或除錯）：
+  🔄 方法二：從容器中複製出原始碼  
+  如果你使用的是 Odoo 官方映像（如 `odoo:18`），Odoo 原始碼其實已經內建在容器中了，你可以用以下方式複製出來（適用於研究或除錯）：
 
    ```bash
    # 啟動容器（如果還沒啟動）
@@ -652,7 +718,7 @@ tags = fields.Many2many('res.partner.category', string="分類標籤")
 
 ---
 
-### 自訂搜尋 {#定義搜尋視圖（search}
+### 自訂搜尋 {#search}
 
 🧩 1. 定義搜尋視圖（search view）
 在你的自訂模組中的 XML 檔案中，繼承目標模型的 search view，並新增自訂篩選器：
@@ -877,6 +943,182 @@ Odoo 18 後台使用 Bootstrap 5 已經內建，你無需額外引入，可直�
 | `xxl` | `≥1400px` | 超大顯示器    |
 
 [回到頂部](#top)
+
+---
+
+### 模型之間的關聯關係 {#relationships-between-models}
+
+在 Odoo 中，模型之間的關係（Relationships）通常透過以下三種欄位類型實現：
+
+- `Many2one`: 多對一
+- `One2many`: 一對多
+- `Many2many`: 多對多
+
+---
+
+## 🧩 1. Many2one（多對一）
+
+一個房屋屬於一個房屋類型。
+
+```python
+# models/estate_property.py
+
+property_type_id = fields.Many2one(
+    "estate.property.type",
+    string="房屋類型",
+)
+```
+
+這表示每一個 estate.property 都指向一個 estate.property.type。
+
+---
+
+🔁 2. One2many（一對多）
+
+一個房屋類型可以對應到很多房屋。
+
+```python
+# models/estate_property_type.py
+
+property_ids = fields.One2many(
+    "estate.property",      # 目標模型
+    "property_type_id",     # 對方的 Many2one 欄位名
+    string="房屋列表",
+)
+```
+
+One2many 必須搭配對方的 Many2one 使用。
+
+🔗 3. Many2many（多對多）
+
+一個房屋可以有多個標籤，標籤也可以套用到多個房屋。
+
+```python
+# models/estate_property.py
+
+tag_ids = fields.Many2many(
+    "estate.property.tag",
+    string="標籤"
+)
+```
+
+這會自動建立一張中介資料表，儲存兩邊的對應關係。
+
+🛠 關聯欄位的常見參數
+
+| 參數         | 說明                     |
+| ---------- | ---------------------- |
+| `string`   | 顯示名稱                   |
+| `required` | 是否必填欄位                 |
+| `ondelete` | 當關聯資料被刪除時的行為（cascade等） |
+| `domain`   | 限制可選範圍                 |
+| `default`  | 預設值                    |
+
+🧪 補充：透過 XML 設定表單關聯欄位
+
+```xml
+<!-- views/estate_property_views.xml -->
+<field name="property_type_id"/>
+<field name="tag_ids" widget="many2many_tags"/>
+```
+
+| 關係類型 | 關鍵欄位類型      | 描述                |
+| ---- | ----------- | ----------------- |
+| 多對一  | `Many2one`  | 多個物件連到一個主物件       |
+| 一對多  | `One2many`  | 需要與 `Many2one` 搭配 |
+| 多對多  | `Many2many` | 雙方皆可有多個關聯         |
+
+💡 小提示
+
+- 命名時盡量使用 _id（Many2one）或_ids（One2many、Many2many）做為結尾。
+- One2many 的 fields 中不能獨立使用，必須配合 Many2one。
+- Many2many 可透過 relation 參數自定中介資料表名稱（通常不必自訂）。
+
+[回到頂部](#top)
+
+---
+
+### 常見 widget 分類與用途
+
+🔹 1. 文字與選項顯示
+
+```xml
+<field name="欄位名稱" widget="html"/>
+```
+
+| Widget 名稱   | 搭配欄位型別      | 說明與範例顯示         |
+| ----------- | ----------- | --------------- |
+| `char`（預設）  | `Char`      | 一般文字輸入框         |
+| `text`      | `Text`      | 多行文字輸入欄位        |
+| `html`      | `Html`      | 富文字編輯器（類似 Word） |
+| `selection` | `Selection` | 下拉選單或選項         |
+| `radio`     | `Selection` | 圓形單選按鈕列表        |
+| `email`     | `Char`      | 顯示 email 並點擊發信  |
+| `url`       | `Char`      | 顯示為超連結          |
+
+🔹 2. Many2many 類別常用 widget
+
+```xml
+<field name="tag_ids" widget="many2many_tags"/>
+```
+
+| Widget 名稱              | 顯示方式   | 備註       |
+| ---------------------- | ------ | -------- |
+| `many2many_tags`       | 多個彩色標籤 | 可新增、刪除   |
+| `many2many_checkboxes` | 勾選框    | 用於固定選項   |
+| `many2many_binary`     | 附件清單   | 用於上傳多個附件 |
+
+🔹 3. One2many 類別常用 widget
+
+```xml
+<field name="offer_ids" widget="one2many_list">
+  <tree editable="bottom">
+    <field name="partner_id"/>
+    <field name="price"/>
+  </tree>
+</field>
+```
+
+| Widget 名稱       | 顯示方式    | 備註                               |
+| --------------- | ------- | -------------------------------- |
+| `one2many_list` | 表格（可新增） | 搭配 `<list editable="bottom">` 使用 |
+| `one2many`（預設）  | 頁籤/嵌入表單 | 可進一步進入明細頁
+
+🔹 4. 附件與圖像相關
+
+```xml
+<field name="image" widget="image" class="oe_avatar"/>
+```
+
+| Widget 名稱          | 用途    |
+| ------------------ | ----- |
+| `image`            | 顯示圖片  |
+| `binary`           | 上傳檔案  |
+| `many2many_binary` | 多附件列表 |
+
+🔹 5. 布林類型與控制
+
+| Widget 名稱        | 用途               |
+| ---------------- | ---------------- |
+| `boolean_toggle` | 顯示為 ON/OFF 切換    |
+| 預設布林欄位           | 顯示為 Checkbox 勾選框 |
+
+📘 小技巧：結合 options 更好用
+
+```xml
+<field name="tag_ids" widget="many2many_tags">
+  <options>
+    <option name="no_create" value="1"/>
+    <option name="color_field" value="color"/>
+  </options>
+</field>
+```
+
+| 選項名稱              | 功能             |
+| ----------------- | -------------- |
+| `no_create`       | 不允許使用者新增項目     |
+| `no_quick_create` | 關閉快速建立選項（僅可搜尋） |
+| `color_field`     | 指定彩色標籤的顏色欄位    |
 
 ---
 

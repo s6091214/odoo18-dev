@@ -6,6 +6,9 @@
     "data": [
         "views/estate_property_views.xml",
         "security/ir.model.access.csv",
+        "views/estate_property_views_type.xml",
+        "views/estate_property_views_tag.xml",
+        "views/estate_property_views_offer.xml",
         "views/test_menu_root.xml",
     ],
     "author": "測試",

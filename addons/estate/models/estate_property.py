@@ -42,3 +42,33 @@ class EstateProperty(models.Model):
         required=True,
         copy=False,
     )
+    property_type_id = fields.Many2one(
+        comodel_name="estate_property_type",
+        string="房屋類型",
+        help="選擇此房產的類型",
+        required=True,
+    )
+    buyer_id = fields.Many2one(
+        comodel_name="res.partner",
+        string="買家",
+        help="選擇此房產的買家",
+        copy=False,
+    )
+    salesperson_id = fields.Many2one(
+        comodel_name="res.users",
+        string="銷售人員",
+        help="負責此房產的銷售人員",
+        default=lambda self: self.env.user,
+        copy=False,
+    )
+    tag_ids = fields.Many2many(
+        comodel_name="estate_property_tag",
+        string="房屋標籤",
+        help="為此房產添加標籤",
+    )
+    offer_ids = fields.One2many(
+        comodel_name="estate_property_offer",
+        inverse_name="property_id",
+        string="房屋報價",
+        help="此房產的所有報價",
+    )

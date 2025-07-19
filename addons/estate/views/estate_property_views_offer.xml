@@ -1,0 +1,21 @@
+<odoo>
+    <record id="estate_property_views_offer_list" model="ir.ui.view">
+        <field name="name">estate_property_views_offer_list</field>
+        <field name="model">estate_property_offer</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="price" string="報價" />
+                <field name="state" string="狀態" />
+                <field name="partner_id" string="客戶" />
+                <field name="property_id" string="房屋" />
+            </list>
+        </field>
+    </record>
+
+
+    <record id="estate_property_views_offer_action" model="ir.actions.act_window">
+        <field name="name">房屋報價</field>
+        <field name="res_model">estate_property_offer</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>
