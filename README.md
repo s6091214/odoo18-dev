@@ -19,23 +19,23 @@
 > 🔗 快速導覽：
 
 - [環境需求與準備](#環境需求與準備)
-- [安裝步驟](#installation-steps)
-- [啟動容器](#start-container)
-- [連線資料庫](#connection-database)
-- [docker常用指令](#docker-common-instructions)
-- [新增自訂模組](#add-custom-modules)
-- [設定 addons_path](#setting-addons-path)
-- [安裝模組](#install-mod)
-- [設定權限](#set-permissions)
-- [修改後升級模組](#modified-upgrade-module)
-- [消除模組警告](#eliminate-module-warnings)
-- [Odoo ORM 常用欄位型別與參數對照表](#odoo-orm-type)
-- [自訂表格欄位](#custom-list)
-- [自訂表單](#custom-form)
-- [自訂義樣式區塊](#custom-style-block)
-- [Bootstrap 常用樣式](#bootstrap)
-- [自訂搜尋](#search)
-- [模型之間的關聯關係](#relationships-between-models)
+- [安裝步驟](#安裝步驟)
+- [啟動容器](#啟動容器)
+- [連線資料庫](#連線資料庫)
+- [docker常用指令](#docker常用指令)
+- [新增自訂模組](#新增自訂模組)
+- [設定 addons_path](#設定-addons_path)
+- [安裝模組](#安裝模組)
+- [設定權限](#設定權限)
+- [修改後升級模組](#修改後升級模組)
+- [消除模組警告](#消除模組警告)
+- [Odoo ORM 常用欄位型別與參數對照表](#odoo-orm-常用欄位型別與參數對照表)
+- [自訂表格欄位](#自訂表格欄位)
+- [自訂表單](#自訂表單)
+- [自訂義樣式區塊](#自訂義樣式區塊)
+- [Bootstrap 常用樣式](#bootstrap-常用樣式)
+- [自訂搜尋](#自訂搜尋)
+- [模型之間的關聯關係](#模型之間的關聯關係)
 
 ---
 
@@ -103,7 +103,7 @@ lsof -i :5432
 
 ---
 
-## 🚀 安裝步驟 {#installation-steps}
+### 🚀安裝步驟
 
 1. **克隆專案**
 
@@ -139,7 +139,7 @@ cd odoo18-dev
 
    [回到頂部](#top)
 
-### 啟動容器 {#start-container}
+### 啟動容器
 
 ```bash
    docker-compose up -d
@@ -171,7 +171,7 @@ cd odoo18-dev
 
 ---
 
-## 連線資料庫 {#connection-database}
+## 連線資料庫
 
 1. 打開 Navicat，新增一個 **PostgreSQL 連線**
 2. 填入以下連線資訊（需對應你的 `docker-compose.yml` 設定）：
@@ -191,7 +191,7 @@ cd odoo18-dev
 
   [回到頂部](#top)
 
-## 🛠️ docker常用指令 {#docker-common-instructions}
+### docker常用指令
 
 ```bash
 # 啟動專案（後台運行）
@@ -235,7 +235,7 @@ docker volume rm volume_name
 
 ---
 
-## 🧩 新增自訂模組 {#add-custom-modules}
+### 新增自訂模組
 
 ### 1️⃣ 建立模組資料夾
 
@@ -424,7 +424,7 @@ _name = "estate.property" ⛔ 不能寫成 res_model="estate_property"，這樣�
 
 ---
 
-### 3️⃣ 設定 addons_path（若尚未設定）{#setting-addons-path}
+### 設定 addons_path
 
 編輯 `odoo.conf`，確保有自訂模組路徑：
 
@@ -436,7 +436,7 @@ addons_path = /odoo/addons,/addons
 
 ---
 
-### 4️⃣ 安裝模組 {#install-mod}
+### 安裝模組
 
 1. 重啟服務：`docker-compose restart`
 2. 進入「應用程式」頁面，搜尋你的模組並安裝
@@ -490,7 +490,7 @@ access_estate_property_all,access.estate.property.all,model_estate_property,base
 
 ---
 
-### 6️⃣ 修改後升級模組 {#modified-upgrade-module}
+### 修改後升級模組
 
 若修改 models 或欄位結構，請透過下列方式升級模組：
 
@@ -517,7 +517,7 @@ docker-compose exec web odoo -u estate -d odoo18testdb --no-http
 
 ---
 
-### 7️⃣ 消除模組警告 {#eliminate-module-warnings}
+### 消除警告
 
 ⚠️ 1. 缺少 license 欄位警告
 
@@ -557,7 +557,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 
 ---
 
-### Odoo ORM 常用欄位型別與參數對照表 {#odoo-orm-type}
+### Odoo ORM 常用欄位型別與參數對照表
 
 ✅ 1. 字串欄位（文字）
 
@@ -642,7 +642,7 @@ tags = fields.Many2many('res.partner.category', string="分類標籤")
 
 ---
 
-### 自訂表格欄位 {#custom-list}
+### 自訂表格欄位
 
 範例
 
@@ -663,7 +663,7 @@ tags = fields.Many2many('res.partner.category', string="分類標籤")
 
 ---
 
-### 自訂表單 {#custom-form}
+### 自訂表單
 
 基本結構說明
 
@@ -718,7 +718,7 @@ tags = fields.Many2many('res.partner.category', string="分類標籤")
 
 ---
 
-### 自訂搜尋 {#search}
+### 自訂搜尋
 
 🧩 1. 定義搜尋視圖（search view）
 在你的自訂模組中的 XML 檔案中，繼承目標模型的 search view，並新增自訂篩選器：
@@ -791,7 +791,7 @@ tags = fields.Many2many('res.partner.category', string="分類標籤")
 
 ---
 
-### 自訂義樣式區塊 {#custom-style-block}
+### 自訂義樣式區塊
 
 📁 SCSS
 請放在 your_module/static/src/scss/custom_styles.scss
@@ -830,7 +830,7 @@ Odoo 18 後台使用 Bootstrap 5 已經內建，你無需額外引入，可直�
 
 ---
 
-## Bootstrap 常用樣式 {#bootstrap}
+### Bootstrap 常用樣式
 
 🔗 參考文件：
 👉 [Bootstrap 5 文件 - HEX School 中文版](https://bootstrap5.hexschool.com/docs/5.1/getting-started/introduction/)
@@ -946,7 +946,7 @@ Odoo 18 後台使用 Bootstrap 5 已經內建，你無需額外引入，可直�
 
 ---
 
-### 模型之間的關聯關係 {#relationships-between-models}
+### 模型之間的關聯關係
 
 在 Odoo 中，模型之間的關係（Relationships）通常透過以下三種欄位類型實現：
 
